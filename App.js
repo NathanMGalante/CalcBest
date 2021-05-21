@@ -21,6 +21,8 @@ export default function App() {
   var idx = [...indexes];
   var pos = indexesPositions;
 
+  var parAdd = false;
+
   const calculator = (n) => {
     let arr = selectArray([...arrays],0);
 
@@ -28,11 +30,15 @@ export default function App() {
 
     }
     else if(n=='par'){
-
+      arr.splice(idx[pos],0,'(',[],')');
+      idx[pos]++;      
+      parAdd = true;
     }
     else if(n=='del'){
-      arr.splice(idx[pos]-1,1);
-      idx[pos]--;
+      if(idx[pos]>0){
+        arr.splice(idx[pos]-1,1);
+        idx[pos]--;
+      }
     }
     else if(n=='delAll'){
       arr = [];
@@ -52,6 +58,8 @@ export default function App() {
       arr.splice(idx[pos],0,n);
       idx[pos]++;
     }
+    
+    
 
     let array = updateArray([...arrays],[...arr],0);
 
@@ -59,38 +67,49 @@ export default function App() {
 
     for(let i = 0; i < arrV.length; i++){
       if(Array.isArray(arrV[i])){
-        arrV.splice(i,1,...arrV[i]);   
-        i--;
+        arrV.splice(i,1,...arrV[i]);
       }   
     }
     
-    let idxV = selectorIndex([...arr],0);
+    let idxV = selectorIndex([...array],0);
 
     arrV.splice(idxV,0,'_');
 
     setArrays([...array]);
     setArraysView([...arrV]);
+    if(parAdd){
+      pos++;
+      idx[pos] = 0;
+    }
     setIndexes([...idx]);
     setIndexesPositions(pos);
-
-    console.log('numero anterior: '+arrV[idx[pos]-1]);
-    console.log('index: '+JSON.stringify(idx));
-    console.log('array atual: '+JSON.stringify(arr));
-    console.log('comprimento array atual: '+arr.length);
+    
+    console.log('idx: '+JSON.stringify(idx));
+    console.log('pos: '+pos);
+    console.log('array: '+JSON.stringify(array));
+    console.log('arr: '+JSON.stringify(arr));
+    console.log('arrV: '+JSON.stringify(arrV));
+    console.log('elemento anterior: '+arrV[idx[pos]-1]);
+    //console.log('comprimento array atual: '+arr.length);
     console.log('\n');
   }
 
-  const selectArray = (arr,p) => {
-    if(p<pos)
-      arr = selectArray(arr[idx[p]],p+1);
-    return [...arr];
+  const selectArray = (arr, p) => {
+    console.log('aaaaaa: '+arr);
+    if(p<pos){
+      let arr2 = arr[idx[p]];
+      arr = selectArray(arr2,p+1);
+    }
+    console.log('bbbbbb: '+arr);
+    return arr;
   }
 
-  const updateArray = (arr,val,p) => {
+  const updateArray = (arr, val, p) => {
     if(p<pos)
-      arr[idx[p]] = selectArray(arr[idx[p]],val,p+1);
-    arr = val;
-    return [...arr];
+      arr[idx[p]] = updateArray(arr[idx[p]],val,p+1);
+    else
+      arr = val;
+    return arr;
   }
 
   const selectorIndex = (arr,p) => {
@@ -172,7 +191,7 @@ export default function App() {
 
             <View style={{width:'70%',height:'100%',flexDirection:'row'}}>
 
-              <TouchableOpacity style={{width:'20%',marginVertical:'1.5%',marginLeft:'20%',backgroundColor: 'rgba(182, 227, 225,0.1)',...styles.btn,borderRadius:100}}>
+              <TouchableOpacity onPress={()=>{calculator('par')}} style={{width:'20%',marginVertical:'1.5%',marginLeft:'20%',backgroundColor: 'rgba(182, 227, 225,0.1)',...styles.btn,borderRadius:100}}>
                 <LinearGradient colors={['rgba(255,255,255,0.2)', 'transparent']} style={styles.gradient}/>
                 <Text style={{height:'100%',fontSize:20,textAlign:'center',textAlignVertical:'center'}}>{'( )'}</Text>
               </TouchableOpacity>
