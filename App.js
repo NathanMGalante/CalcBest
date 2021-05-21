@@ -31,16 +31,22 @@ export default function App() {
 
     }
     else if(n=='del'){
-
+      arr.splice(idx[pos]-1,1);
+      idx[pos]--;
     }
     else if(n=='delAll'){
-
+      arr = [];
+      arrV = [];
+      idx = [0];
+      pos = 0;
     }
-    else if(n=='lefy'){
-
+    else if(n=='left'){
+      if(idx[pos]>0)
+        idx[pos]--;
     }
     else if(n=='right'){
-
+      if(idx[pos]<arr.length)
+        idx[pos]++;
     }
     else{
       arr.splice(idx[pos],0,n);
@@ -60,20 +66,22 @@ export default function App() {
 
     console.log('numero anterior: '+arrV[idx[pos]-1]);
     console.log('index: '+JSON.stringify(idx));
+    console.log('array atual: '+JSON.stringify(arr));
+    console.log('comprimento array atual: '+arr.length);
     console.log('\n');
   }
 
   const selectArray = (arr,p) => {
     if(p<pos)
       arr = selectArray(arr[idx[p]],p+1);
-    return arr;
+    return [...arr];
   }
 
   const updateArray = (arr,val,p) => {
     if(p<pos)
       arr[idx[p]] = selectArray(arr[idx[p]],val,p+1);
     arr = val;
-    return arr;
+    return [...arr];
   }
 
   return (
@@ -106,16 +114,18 @@ export default function App() {
 
         {/*barra de controle*/}
         <View style={{width:'94%',height:'8%',flexDirection:'row',alignItems:'center',marginHorizontal:'3%'}}>
-          <TouchableOpacity style={{width:'30%',height:'100%',alignItems:'center',alignContent:'center'}}>
+
+          <TouchableOpacity onPress={()=>{calculator('left')}} style={{width:'30%',height:'100%',alignItems:'center',alignContent:'center'}}>
             <AntDesign name="arrowleft" size={40} color='black' style={{textAlignVertical:'center',textAlign:'center',width:'100%',height:'100%'}} />
           </TouchableOpacity>
 
           <TouchableOpacity style={{width:'40%',height:'75%',backgroundColor:'rgba(255,255,255,0.75)',...styles.btn}}>            
           </TouchableOpacity>
 
-          <TouchableOpacity style={{width:'30%',height:'100%',alignItems:'center'}}>
+          <TouchableOpacity onPress={()=>{calculator('right')}} style={{width:'30%',height:'100%',alignItems:'center'}}>
             <AntDesign name="arrowright" size={40} color='black' style={{textAlignVertical:'center',textAlign:'center',width:'100%',height:'100%'}} />
           </TouchableOpacity>
+
         </View>
 
 
@@ -141,7 +151,7 @@ export default function App() {
 
             </View>
 
-            <TouchableOpacity style={{width:'30%',height:'100%',backgroundColor:'rgba(255,20,20,0.275)',...styles.btn}}>
+            <TouchableOpacity onPress={()=>{calculator('del')}}  onLongPress={()=>{calculator('delAll')}} style={{width:'30%',height:'100%',backgroundColor:'rgba(255,20,20,0.275)',...styles.btn}}>
               <LinearGradient colors={['rgba(255,255,255,0.2)', 'transparent']} style={styles.gradient}/>
               <Feather name="delete" size={28} color="black" style={{height:'100%',textAlign:'center',textAlignVertical:'center'}} />
             </TouchableOpacity>
