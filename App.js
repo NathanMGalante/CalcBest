@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import React,{useState,useEffect} from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, Modal,TouchableHighlight, Button, SafeAreaView,SectionList } from 'react-native';
+import React,{useState} from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Constants from 'expo-constants';
+//import Constants from 'expo-constants';
 import { Feather,AntDesign } from '@expo/vector-icons';
 
 export default function App() {
@@ -11,6 +11,70 @@ export default function App() {
   const signs = ['*','/','+','-'];
   const signsAll = ['*','/','+','-','(',')','sqr'];
   const characters = ['Calcule os parenteses','Calcule as multiplicações','Calcule as Divisões','Calcule as adições','Calcule as subtrações']
+
+  const [arrays,setArrays] = useState([]);
+  const [arraysView,setArraysView] = useState(['_']);
+  const [indexes,setIndexes] = useState([0]);
+  const [indexesPositions,setIndexesPositions] = useState(0);
+
+  var arrV = [...arraysView];
+  var idx = [...indexes];
+  var pos = indexesPositions;
+
+  const calculator = (n) => {
+    let arr = selectArray([...arrays],0);
+
+    if(n=='sqr'){
+
+    }
+    else if(n=='par'){
+
+    }
+    else if(n=='del'){
+
+    }
+    else if(n=='delAll'){
+
+    }
+    else if(n=='lefy'){
+
+    }
+    else if(n=='right'){
+
+    }
+    else{
+      arr.splice(idx[pos],0,n);
+      idx[pos]++;
+    }
+
+    let array = updateArray([...arrays],[...arr],0);
+
+    arrV = [...array];
+
+    arrV.splice(idx[pos],0,'_');
+
+    setArrays([...array]);
+    setArraysView([...arrV]);
+    setIndexes([...idx]);
+    setIndexesPositions(pos);
+
+    console.log('numero anterior: '+arrV[idx[pos]-1]);
+    console.log('index: '+JSON.stringify(idx));
+    console.log('\n');
+  }
+
+  const selectArray = (arr,p) => {
+    if(p<pos)
+      arr = selectArray(arr[idx[p]],p+1);
+    return arr;
+  }
+
+  const updateArray = (arr,val,p) => {
+    if(p<pos)
+      arr[idx[p]] = selectArray(arr[idx[p]],val,p+1);
+    arr = val;
+    return arr;
+  }
 
   return (
     <View style={styles.container}>
@@ -23,7 +87,18 @@ export default function App() {
         {/*painel*/}
         <View style={{width:'100%',height:'35%',padding:'7.5%',paddingBottom:0}}>
           <View style={{width:'100%',height:'100%',borderColor:'black',borderWidth:5,backgroundColor:'rgba(255,255,255,0.75)'}}>
-
+            <View style={{flexDirection:'row',flexWrap:'wrap', padding:'3%',height:'100%',width:'100%'}}>
+            {
+              arraysView.map((val)=>{
+                let col = 'black';
+                if(val=='_')
+                  col = 'red';
+                return(
+                  <Text style={{fontSize:30,color:col, textAlign:'center',textAlignVertical:'center'}}>{val}</Text>
+                );
+              })
+            }
+            </View>
           </View>
         </View>
 
@@ -87,7 +162,7 @@ export default function App() {
               else if(val=='.')
                 fs = 30;
               return(
-                <TouchableOpacity style={{width:'22%',height:'22%',margin:'1.5%',backgroundColor: bgCol,...styles.btn,borderRadius:rad}}>
+                <TouchableOpacity onPress={()=>{calculator(val)}} style={{width:'22%',height:'22%',margin:'1.5%',backgroundColor: bgCol,...styles.btn,borderRadius:rad}}>
                   <Text style={{height:'100%',fontSize:fs,textAlign:'center',textAlignVertical:'center'}}>{val=='/'?'÷':val=='*'?'x':val}</Text>
                 </TouchableOpacity>
               );
