@@ -57,7 +57,16 @@ export default function App() {
 
     arrV = [...array];
 
-    arrV.splice(idx[pos],0,'_');
+    for(let i = 0; i < arrV.length; i++){
+      if(Array.isArray(arrV[i])){
+        arrV.splice(i,1,...arrV[i]);   
+        i--;
+      }   
+    }
+    
+    let idxV = selectorIndex([...arr],0);
+
+    arrV.splice(idxV,0,'_');
 
     setArrays([...array]);
     setArraysView([...arrV]);
@@ -82,6 +91,30 @@ export default function App() {
       arr[idx[p]] = selectArray(arr[idx[p]],val,p+1);
     arr = val;
     return [...arr];
+  }
+
+  const selectorIndex = (arr,p) => {
+    let val = 0;
+    for(let i = 0; i < idx[p]; i++){
+      if(Array.isArray(arr[i]))
+        val+= selectorIndexArray(arr[i]);
+      else val++;
+    }
+    if(p<pos)
+      val+= selectorIndex(arr[idx[p]],p+1);
+
+    return val;
+  }
+
+  const selectorIndexArray = (arr) => {
+    let val = 0;
+    for(let i = 0; i < arr.length; i++){
+      if(Array.isArray(arr[i]))
+        val+= selectorIndexArray(arr[i]);
+      else val++;
+    }
+
+    return val;
   }
 
   return (
