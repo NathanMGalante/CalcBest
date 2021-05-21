@@ -36,8 +36,10 @@ export default function App() {
     }
     else if(n=='del'){
       if(idx[pos]>0){
-        arr.splice(idx[pos]-1,1);
-        idx[pos]--;
+        if(arr[idx[pos]-1]!=')'){
+          arr.splice(idx[pos]-1,1);
+          idx[pos]--;
+        }
       }
     }
     else if(n=='delAll'){
@@ -47,12 +49,44 @@ export default function App() {
       pos = 0;
     }
     else if(n=='left'){
-      if(idx[pos]>0)
-        idx[pos]--;
+      if(idx[pos]>0){
+        if(arr[idx[pos]-1]==')'){
+          idx[pos]-=2;
+          pos++;
+          arr = selectArray([...arrays],0);
+          idx[pos] = arr.length;
+        }
+        else
+          idx[pos]--;        
+      }
+      else{
+        if(pos>0){//sair do parenteses
+          pos--;
+          idx[pos]--;
+          idx.pop();
+          arr = selectArray([...arrays],0);
+        }
+      }
     }
     else if(n=='right'){
-      if(idx[pos]<arr.length)
-        idx[pos]++;
+      if(idx[pos]<arr.length){
+        if(arr[idx[pos]]=='('){
+          idx[pos]++;
+          pos++;
+          arr = selectArray([...arrays],0);
+          idx[pos] = 0;
+        }
+        else
+          idx[pos]++; 
+      }
+      else{
+        if(pos>0){//sair do parenteses
+          pos--;          
+          idx[pos]+=2;
+          idx.pop();  
+          arr = selectArray([...arrays],0);        
+        }
+      }
     }
     else{
       arr.splice(idx[pos],0,n);
@@ -89,18 +123,16 @@ export default function App() {
     console.log('array: '+JSON.stringify(array));
     console.log('arr: '+JSON.stringify(arr));
     console.log('arrV: '+JSON.stringify(arrV));
-    console.log('elemento anterior: '+arrV[idx[pos]-1]);
+    console.log(arr[idx[pos]-1]+'  _  '+arr[idx[pos]]);
     //console.log('comprimento array atual: '+arr.length);
     console.log('\n');
   }
 
   const selectArray = (arr, p) => {
-    console.log('aaaaaa: '+arr);
     if(p<pos){
       let arr2 = arr[idx[p]];
       arr = selectArray(arr2,p+1);
     }
-    console.log('bbbbbb: '+arr);
     return arr;
   }
 
@@ -151,10 +183,13 @@ export default function App() {
             {
               arraysView.map((val)=>{
                 let col = 'black';
+                let pd = 0;                
                 if(val=='_')
                   col = 'red';
+                else if(signsAll.includes(val))
+                  pd = 5;
                 return(
-                  <Text style={{fontSize:30,color:col, textAlign:'center',textAlignVertical:'center'}}>{val}</Text>
+                  <Text style={{fontSize:30,color:col,paddingHorizontal:pd,textAlign:'center',textAlignVertical:'center'}}>{val}</Text>
                 );
               })
             }
