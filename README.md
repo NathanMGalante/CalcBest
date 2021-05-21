@@ -4,10 +4,9 @@
  Partes adicionadas:
 
     -aparencia
-
-Partes a serem adicionadas:
-
     -mostrar valores na tela
+
+Partes a serem adicionadas:    
 
     -fazer calculos basicos
 
