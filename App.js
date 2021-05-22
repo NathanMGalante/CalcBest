@@ -16,6 +16,7 @@ export default function App() {
   const [arraysView,setArraysView] = useState(['_']);
   const [indexes,setIndexes] = useState([0]);
   const [indexesPositions,setIndexesPositions] = useState(0);
+  const [result,setResult] = useState([]);
 
   var arrV = [...arraysView];
   var idx = [...indexes];
@@ -118,6 +119,9 @@ export default function App() {
     setIndexes([...idx]);
     setIndexesPositions(pos);
     
+    let res = calcResult([...array]);
+    setResult([...res]);
+    
     console.log('idx: '+JSON.stringify(idx));
     console.log('pos: '+pos);
     console.log('array: '+JSON.stringify(array));
@@ -168,6 +172,32 @@ export default function App() {
     return val;
   }
 
+  const calcNumbers = (arr) => {
+    for(let i = 0; i < arr.length-1; i++){
+      if(Array.isArray(arr[i]))
+        arr[i] = calcResult(arr[i]);      
+      else{
+        if(!isNaN(parseInt(arr[i]))&&signsAll.includes(arr[i])){
+          if(!isNaN(parseInt(arr[i+1]))&&signsAll.includes(arr[i+1])){
+            arr.splice(i,2,arr[i]+''+arr[i+1]);
+            i--;
+          }
+        }
+      }
+    }
+    return arr;
+  }
+
+  const calcResult = (arr) => {
+    arr = calcNumbers(arr);
+
+    return arr;
+  }
+
+  const calcSign = (arr) => {
+
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -206,7 +236,8 @@ export default function App() {
             <AntDesign name="arrowleft" size={40} color='black' style={{textAlignVertical:'center',textAlign:'center',width:'100%',height:'100%'}} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={{width:'40%',height:'75%',backgroundColor:'rgba(255,255,255,0.75)',...styles.btn}}>            
+          <TouchableOpacity style={{width:'40%',height:'75%',backgroundColor:'rgba(255,255,255,0.75)',...styles.btn}}>
+            <Text>{result}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={()=>{calculator('right')}} style={{width:'30%',height:'100%',alignItems:'center'}}>
