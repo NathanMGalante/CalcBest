@@ -177,8 +177,8 @@ export default function App() {
       if(Array.isArray(arr[i]))
         arr[i] = calcResult(arr[i]);      
       else{
-        if(!isNaN(parseInt(arr[i]))&&signsAll.includes(arr[i])){
-          if(!isNaN(parseInt(arr[i+1]))&&signsAll.includes(arr[i+1])){
+        if(!isNaN(parseInt(arr[i]))&&!signsAll.includes(arr[i])){
+          if(!isNaN(parseInt(arr[i+1]))&&!signsAll.includes(arr[i+1])){
             arr.splice(i,2,arr[i]+''+arr[i+1]);
             i--;
           }
@@ -190,12 +190,38 @@ export default function App() {
 
   const calcResult = (arr) => {
     arr = calcNumbers(arr);
-
+    arr = calcSigns(arr);
     return arr;
   }
 
-  const calcSign = (arr) => {
-
+  const calcSigns = (arr) => {
+    for(let i = 1; i < arr.length-1; i++){
+      if(arr[i]=='*'||arr[i]=='/'){
+        if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){          
+          if(!isNaN(parseFloat(arr[i+1]))&&!signsAll.includes(arr[i+1])){
+            if(arr[i]=='*')
+              arr.splice(i-1,3,parseFloat(arr[i-1])*parseFloat(arr[i+1]));
+            else
+              arr.splice(i-1,3,parseFloat(arr[i-1])/parseFloat(arr[i+1]));
+            i--;
+          }
+        }
+      }
+    }
+    for(let i = 1; i < arr.length-1; i++){
+      if(arr[i]=='+'||arr[i]=='-'){
+        if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){          
+          if(!isNaN(parseFloat(arr[i+1]))&&!signsAll.includes(arr[i+1])){
+            if(arr[i]=='+')
+              arr.splice(i-1,3,parseFloat(arr[i-1])+parseFloat(arr[i+1]));
+            else
+              arr.splice(i-1,3,parseFloat(arr[i-1])-parseFloat(arr[i+1]));
+            i--;
+          }
+        }
+      }
+    }
+    return arr;
   }
 
   return (
@@ -237,7 +263,7 @@ export default function App() {
           </TouchableOpacity>
 
           <TouchableOpacity style={{width:'40%',height:'75%',backgroundColor:'rgba(255,255,255,0.75)',...styles.btn}}>
-            <Text>{result}</Text>
+            <Text style={{textAlign:'center',textAlignVertical:'center',height:'100%'}}>{result}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={()=>{calculator('right')}} style={{width:'30%',height:'100%',alignItems:'center'}}>
