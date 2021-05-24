@@ -78,7 +78,7 @@ export default function App() {
           idx[pos] = 0;
         }
         else
-          idx[pos]++; 
+          idx[pos]++;
       }
       else{
         if(pos>0){//sair do parenteses
@@ -118,8 +118,8 @@ export default function App() {
     }
     setIndexes([...idx]);
     setIndexesPositions(pos);
-    
-    let res = calcResult([...array]);
+    let arrR = [...array];
+    let res = calcResult([...arrR]);
     setResult([...res]);
     
     console.log('idx: '+JSON.stringify(idx));
@@ -141,8 +141,10 @@ export default function App() {
   }
 
   const updateArray = (arr, val, p) => {
-    if(p<pos)
-      arr[idx[p]] = updateArray(arr[idx[p]],val,p+1);
+    if(p<pos){
+      let arr2 = arr[idx[p]];
+      arr[idx[p]] = updateArray([...arr2],val,p+1);
+    }
     else
       arr = val;
     return arr;
@@ -150,13 +152,18 @@ export default function App() {
 
   const selectorIndex = (arr,p) => {
     let val = 0;
+    let arr2;
     for(let i = 0; i < idx[p]; i++){
-      if(Array.isArray(arr[i]))
-        val+= selectorIndexArray(arr[i]);
+      if(Array.isArray(arr[i])){
+        arr2 = arr[i];
+        val+= selectorIndexArray([...arr2]);
+      }
       else val++;
     }
-    if(p<pos)
-      val+= selectorIndex(arr[idx[p]],p+1);
+    if(p<pos){
+      arr2 = arr[idx[p]]
+      val+= selectorIndex([...arr2],p+1);
+    }
 
     return val;
   }
@@ -164,8 +171,10 @@ export default function App() {
   const selectorIndexArray = (arr) => {
     let val = 0;
     for(let i = 0; i < arr.length; i++){
-      if(Array.isArray(arr[i]))
-        val+= selectorIndexArray(arr[i]);
+      if(Array.isArray(arr[i])){
+        let arr2 = arr[i];
+        val+= selectorIndexArray([...arr2]);
+      }
       else val++;
     }
 
@@ -174,8 +183,10 @@ export default function App() {
 
   const calcNumbers = (arr) => {
     for(let i = 0; i < arr.length-1; i++){
-      if(Array.isArray(arr[i]))
-        arr[i] = calcResult(arr[i]);      
+      if(Array.isArray(arr[i])){
+        let arr2 = arr[i];
+        arr[i] = calcNumbers([...arr2]);
+      }
       else{
         if(!isNaN(parseInt(arr[i]))&&!signsAll.includes(arr[i])){
           if(!isNaN(parseInt(arr[i+1]))&&!signsAll.includes(arr[i+1])){
@@ -184,12 +195,41 @@ export default function App() {
           }
         }
       }
-    }
+    }    
     return arr;
   }
 
   const calcResult = (arr) => {
     arr = calcNumbers(arr);
+    console.log('result Numb:'+JSON.stringify([...arr]));
+    arr = calcPar(arr);
+    console.log('result Par:'+JSON.stringify([...arr]));
+    arr = calcSigns(arr);
+    console.log('result Sign:'+JSON.stringify([...arr]));
+    return arr;
+  }
+
+  const calcPar = (arr) => {
+    for(let i = 0; i < arr.length; i++){
+      if(arr[i]=='('){
+        let arr2 = arr[i+1];
+        let arr3 = calcPar([...arr2]);        
+        let valL = false;
+        let valR = false;
+        if(!signs.includes(arr[i-1])&&i>0)
+          valL = true;
+        if(!signs.includes(arr[i+3])&&i<arr.length-3)
+          valR = true;
+        if(valL&&valR)
+          arr.splice(i,3,'*',...arr3,'*');
+        else if(valL)
+          arr.splice(i,3,'*',...arr3);
+        else if(valR)
+          arr.splice(i,3,...arr3,'*');
+        else
+          arr.splice(i,3,...arr3);
+      }
+    }
     arr = calcSigns(arr);
     return arr;
   }
@@ -199,10 +239,12 @@ export default function App() {
       if(arr[i]=='*'||arr[i]=='/'){
         if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){          
           if(!isNaN(parseFloat(arr[i+1]))&&!signsAll.includes(arr[i+1])){
+            let val;
             if(arr[i]=='*')
-              arr.splice(i-1,3,parseFloat(arr[i-1])*parseFloat(arr[i+1]));
+              val = parseFloat(arr[i-1])*parseFloat(arr[i+1])
             else
-              arr.splice(i-1,3,parseFloat(arr[i-1])/parseFloat(arr[i+1]));
+              val = parseFloat(arr[i-1])/parseFloat(arr[i+1])
+            arr.splice(i-1,3,val+'');
             i--;
           }
         }
@@ -212,10 +254,17 @@ export default function App() {
       if(arr[i]=='+'||arr[i]=='-'){
         if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){          
           if(!isNaN(parseFloat(arr[i+1]))&&!signsAll.includes(arr[i+1])){
+            let val;
             if(arr[i]=='+')
-              arr.splice(i-1,3,parseFloat(arr[i-1])+parseFloat(arr[i+1]));
+              val = parseFloat(arr[i-1])+parseFloat(arr[i+1])
             else
-              arr.splice(i-1,3,parseFloat(arr[i-1])-parseFloat(arr[i+1]));
+              val = parseFloat(arr[i-1])-parseFloat(arr[i+1])
+            /*if(val<0){
+              val*= -1;
+              arr.splice(i-1,3,'-',val+'');
+            }
+            else*/
+              arr.splice(i-1,3,val+'');
             i--;
           }
         }
