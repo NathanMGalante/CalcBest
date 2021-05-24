@@ -25,51 +25,51 @@ export default function App() {
   var parAdd = false;
 
   const calculator = (n) => {
-    let arr = selectArray([...arrays],0);
 
+    let arr = selectArray([...arrays],0);//seleciona o array atual (caso o seletor esteja dentro de um parenteses)
     if(n=='sqr'){
 
     }
-    else if(n=='par'){
-      arr.splice(idx[pos],0,'(',[],')');
-      idx[pos]++;      
-      parAdd = true;
+    else if(n=='par'){//se o botão for o de parenteses
+      arr.splice(idx[pos],0,'(',[],')');//adiciona os parenteses e o array que contera os valores indernos do aprenteses.
+      idx[pos]++;//seleciona o array do parenteses
+      parAdd = true;//libera para que após salvar as modificações, o seletor entre dentro do array.
     }
-    else if(n=='del'){
-      if(idx[pos]>0){
-        if(arr[idx[pos]-1]!=')'){
-          arr.splice(idx[pos]-1,1);
-          idx[pos]--;
+    else if(n=='del'){//se o botão for o de deletar
+      if(idx[pos]>0){//se a posição dentro do array for maior que zero...
+        if(arr[idx[pos]-1]!=')'){//se o elemento anterior não for um parenteses...
+          arr.splice(idx[pos]-1,1);//deleta o elemento anterior!
+          idx[pos]--;//move o seletor para a esquerda!
         }
       }
     }
-    else if(n=='delAll'){
-      arr = [];
-      arrV = [];
-      idx = [0];
-      pos = 0;
+    else if(n=='delAll'){//se o botão for o de deletar tudo
+      arr = [];//reseta o array principal
+      arrV = [];//reseta o array mostrado na tela
+      idx = [0];//reseta a posição do seletor
+      pos = 0;//seleciona a posição para ser o array principal
     }
-    else if(n=='left'){
-      if(idx[pos]>0){
-        if(arr[idx[pos]-1]==')'){
-          idx[pos]-=2;
-          pos++;
-          arr = selectArray([...arrays],0);
-          idx[pos] = arr.length;
+    else if(n=='left'){//se o botão for o de mover para a esquerda
+      if(idx[pos]>0){//se a posição dentro do array for maior que zero...
+        if(arr[idx[pos]-1]==')'){//se o elemento da esquerda for um parenteses...
+          idx[pos]-=2;//seleciona o array do parenteses
+          pos++;//seletor entra dentro do array
+          arr = selectArray([...arrays],0);//seleciona o array atual
+          idx[pos] = arr.length;//posição do seletor igual a ultima do array atual
         }
-        else
-          idx[pos]--;        
+        else//se o elemento da esquerda NÃO for um parenteses...
+          idx[pos]--;//move o seletor para a esquerda
       }
-      else{
-        if(pos>0){//sair do parenteses
-          pos--;
-          idx[pos]--;
-          idx.pop();
-          arr = selectArray([...arrays],0);
+      else{//se a posição dentro do array for igual a zero...
+        if(pos>0){//se o seletor estiver dentro de um parenteses...
+          pos--;//o seletor sai de dentro do parenteses
+          idx[pos]--;//seletor se move para a esquerda do parenteses
+          idx.pop();//deleta o parenteses do array de posições
+          arr = selectArray([...arrays],0);//seleciona o array atual
         }
       }
     }
-    else if(n=='right'){
+    else if(n=='right'){//IGUAL O DA ESQUERDA, MAS AGORA PARA A DIREITA...
       if(idx[pos]<arr.length){
         if(arr[idx[pos]]=='('){
           idx[pos]++;
@@ -89,50 +89,50 @@ export default function App() {
         }
       }
     }
-    else{
-      arr.splice(idx[pos],0,n);
-      idx[pos]++;
+    else{//se o valor do botão for numérico ou de sinais...
+      arr.splice(idx[pos],0,n);//adiciona o valor no local do seletor.
+      idx[pos]++;//move o seletor para a frente.
     }
     
     
 
-    let array = updateArray([...arrays],[...arr],0);
+    let array = updateArray([...arrays],[...arr],0);//atualiza o array principal com as modificações feitas.
 
-    arrV = [...array];
+    arrV = [...array];//array mostrado na tela igual o array principal
 
-    for(let i = 0; i < arrV.length; i++){
+    for(let i = 0; i < arrV.length; i++){//remove todos os arrays internos e deixa todos os elementos em apenas uma linha
       if(Array.isArray(arrV[i])){
         arrV.splice(i,1,...arrV[i]);
       }   
     }
     
-    let idxV = selectorIndex([...array],0);
+    let idxV = selectorIndex([...array],0);//obtem o index em que o seletor deve ser posicionado.
 
-    arrV.splice(idxV,0,'_');
+    arrV.splice(idxV,0,'_');//posiciona o seletor dentro do array mostrado na tela
 
-    setArrays([...array]);
-    setArraysView([...arrV]);
-    if(parAdd){
-      pos++;
-      idx[pos] = 0;
+    setArrays([...array]);//salva o array principal
+    setArraysView([...arrV]);//salva o array da tela
+    if(parAdd){//se a ultima modificação foi a de criar um parenteses...
+      pos++;//seletor entra dentro do array do parenteses
+      idx[pos] = 0;//posição igual a zero
     }
-    setIndexes([...idx]);
-    setIndexesPositions(pos);
+    setIndexes([...idx]);//salva o array de posições
+    setIndexesPositions(pos);//salva em qual array o seletor se encontra
     let arrR = [...array];
-    let res = calcResult([...arrR]);
-    setResult([...res]);
+    let res = calcResult([...arrR]);//calcular os resultados
+    setResult([...res]);//salvar resultado final
     
-    console.log('idx: '+JSON.stringify(idx));
-    console.log('pos: '+pos);
-    console.log('array: '+JSON.stringify(array));
-    console.log('arr: '+JSON.stringify(arr));
-    console.log('arrV: '+JSON.stringify(arrV));
-    console.log(arr[idx[pos]-1]+'  _  '+arr[idx[pos]]);
+    //console.log('idx: '+JSON.stringify(idx));
+    //console.log('pos: '+pos);
+    //console.log('array: '+JSON.stringify(array));
+    //console.log('arr: '+JSON.stringify(arr));
+    //console.log('arrV: '+JSON.stringify(arrV));
+    //console.log(arr[idx[pos]-1]+'  _  '+arr[idx[pos]]);
     //console.log('comprimento array atual: '+arr.length);
-    console.log('\n');
+    //console.log('\n');
   }
 
-  const selectArray = (arr, p) => {
+  const selectArray = (arr, p) => {//função para selecionar o array atual
     if(p<pos){
       let arr2 = arr[idx[p]];
       arr = selectArray(arr2,p+1);
@@ -140,7 +140,7 @@ export default function App() {
     return arr;
   }
 
-  const updateArray = (arr, val, p) => {
+  const updateArray = (arr, val, p) => {//função para atualizar o array principal com as mosdificações feitas
     if(p<pos){
       let arr2 = arr[idx[p]];
       arr[idx[p]] = updateArray([...arr2],val,p+1);
@@ -150,7 +150,7 @@ export default function App() {
     return arr;
   }
 
-  const selectorIndex = (arr,p) => {
+  const selectorIndex = (arr,p) => {//função para contar em qual posição esta o seletor.
     let val = 0;
     let arr2;
     for(let i = 0; i < idx[p]; i++){
@@ -168,7 +168,7 @@ export default function App() {
     return val;
   }
 
-  const selectorIndexArray = (arr) => {
+  const selectorIndexArray = (arr) => {//função para contar quantos elementos tem dentro de um array
     let val = 0;
     for(let i = 0; i < arr.length; i++){
       if(Array.isArray(arr[i])){
@@ -181,7 +181,7 @@ export default function App() {
     return val;
   }
 
-  const calcNumbers = (arr) => {
+  const calcNumbers = (arr) => {//função para juntar os elementos numericos visinhos em apenas um elemento
     for(let i = 0; i < arr.length-1; i++){
       if(Array.isArray(arr[i])){
         let arr2 = arr[i];
@@ -199,17 +199,17 @@ export default function App() {
     return arr;
   }
 
-  const calcResult = (arr) => {
+  const calcResult = (arr) => {//função para calcular os resultados
     arr = calcNumbers(arr);
-    console.log('result Numb:'+JSON.stringify([...arr]));
+    //console.log('result Numb:'+JSON.stringify([...arr]));
     arr = calcPar(arr);
-    console.log('result Par:'+JSON.stringify([...arr]));
+    //console.log('result Par:'+JSON.stringify([...arr]));
     arr = calcSigns(arr);
-    console.log('result Sign:'+JSON.stringify([...arr]));
+    //console.log('result Sign:'+JSON.stringify([...arr]));
     return arr;
   }
 
-  const calcPar = (arr) => {
+  const calcPar = (arr) => {//função para calcular dentro de todos os parenteses
     for(let i = 0; i < arr.length; i++){
       if(arr[i]=='('){
         let arr2 = arr[i+1];
@@ -234,7 +234,7 @@ export default function App() {
     return arr;
   }
 
-  const calcSigns = (arr) => {
+  const calcSigns = (arr) => {//função para calcular envolvendo os sinais basicos
     for(let i = 1; i < arr.length-1; i++){
       if(arr[i]=='*'||arr[i]=='/'){
         if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){          
@@ -274,7 +274,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}>      
       <StatusBar style="auto" />
       <LinearGradient colors={['rgba(255,255,255,0.3)', 'transparent']} style={{...styles.gradient,top:0}}/>  
       <View style={{width:'100%',height:'100%',position:'relative'}}>
