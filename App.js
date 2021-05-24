@@ -237,7 +237,7 @@ export default function App() {
   const calcSigns = (arr) => {//função para calcular envolvendo os sinais basicos
     for(let i = 1; i < arr.length-1; i++){
       if(arr[i]=='*'||arr[i]=='/'){
-        if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){          
+        if(!isNaN(parseFloat(arr[i-1]))&&!signsAll.includes(arr[i-1])){
           if(!isNaN(parseFloat(arr[i+1]))&&!signsAll.includes(arr[i+1])){
             let val;
             if(arr[i]=='*')
@@ -246,8 +246,8 @@ export default function App() {
               val = parseFloat(arr[i-1])/parseFloat(arr[i+1])
             arr.splice(i-1,3,val+'');
             i--;
-          }
-        }
+          }else arr = 'impossivel calcular'
+        }else arr = 'impossivel calcular'
       }
     }
     for(let i = 1; i < arr.length-1; i++){
@@ -266,8 +266,8 @@ export default function App() {
             else*/
               arr.splice(i-1,3,val+'');
             i--;
-          }
-        }
+          }else arr = 'impossivel calcular'
+        }else arr = 'impossivel calcular'
       }
     }
     return arr;
